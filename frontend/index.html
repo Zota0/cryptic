@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptic - Secure Messaging & Transactions</title>
+    <script src="/static/htmx.min.js"></script>
+    <script src="/static/hyperscript.min.js"></script>
+    <script src="/static/tailwind.min.js"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-primary text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="text-xl font-bold">Cryptic</div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="/dashboard" hx-get="/dashboard" hx-target="#content" class="hover:text-accent transition">Dashboard</a>
+                    <a href="/messages" hx-get="/messages" hx-target="#content" class="hover:text-accent transition">Messages</a>
+                    <a href="/transactions" hx-get="/transactions" hx-target="#content" class="hover:text-accent transition">Transactions</a>
+                </div>
+                <div id="auth-section">
+                    <button
+                        hx-get="/api/auth/status"
+                        hx-trigger="load once"
+                        hx-swap="outerHTML"
+                        hx-target="this"
+                        class="bg-accent hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition">
+                        Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 py-8">
+        <!-- Login Form -->
+        <div id="login-form" class="max-w-md mx-auto bg-white rounded-lg shadow-md p-8">
+            <h2 class="text-2xl font-bold mb-6 text-primary">Login</h2>
+            <form hx-post="/api/login" 
+                  hx-target="#auth-section"
+                  hx-swap="outerHTML"
+                  hx-headers='{"Content-Type": "application/json"}'
+                  hx-on::before-request="event.detail.requestConfig.body = JSON.stringify({
+                      username: document.getElementById('username').value,
+                      password: document.getElementById('password').value
+                  });"
+                  hx-on::after-request="if(event.detail.successful) {
+                      htmx.trigger('#auth-section', 'auth-changed');
+                  }">
+                  <div id="request-debug" class="text-sm text-gray-600 mb-4"></div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                        Username
+                    </label>
+                    <input
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="username"
+                        type="text"
+                        name="username"
+                        required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                        Password
+                    </label>
+                    <input
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                        id="password"
+                        type="password"
+                        name="password"
+                        autocomplete="current-password"
+                        required>
+                </div>
+                <div id="login-error" class="hidden text-red-500 text-sm mb-4"></div>
+                <div class="flex items-center justify-between">
+                    <button
+                        class="bg-accent hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition"
+                        type="submit">
+                        Sign In
+                    </button>
+                    <a class="inline-block align-baseline font-bold text-sm text-accent hover:text-blue-700" href="/register">
+                        Register
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Content Container -->
+        <div id="content" class="hidden">
+            <!-- Content will be loaded here via HTMX -->
+        </div>
+    </main>
+
+    <script type="text/hyperscript">
+        on htmx:afterSettle(target) from body
+            if target.id == "auth-section" then
+                if target.innerHTML contains "Logout" then
+                    remove .hidden from #content
+                    add .hidden to #login-form
+                else
+                    add .hidden to #content
+                    remove .hidden from #login-form
+                end
+            end
+        end
+
+        def authChanged
+            remove .hidden from #content
+            add .hidden to #login-form
+        end
+    </script>
+</body>
+</html>

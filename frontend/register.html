@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Cryptic</title>
+    <script src="/static/htmx.min.js"></script>
+    <script src="/static/hyperscript.min.js"></script>
+    <script src="/static/tailwind.min.js"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full bg-white rounded-lg shadow-md p-8 m-4">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-primary">Create Account</h2>
+            <p class="text-gray-600 mt-2">Join Cryptic for secure messaging and transactions</p>
+        </div>
+
+        <form hx-post="/api/register" hx-swap="outerHTML"
+              hx-headers='{"Content-Type": "application/json"}'
+              hx-on::before-request="
+                  const formData = {
+                      username: document.getElementById('username').value,
+                      email: document.getElementById('email').value,
+                      password: document.getElementById('password').value
+                  };
+                  console.log('Sending registration data:', formData);
+                  event.detail.requestConfig.body = JSON.stringify(formData);
+              "
+              hx-on::after-request="
+                  console.log('Registration response:', event.detail.xhr.response);
+                  if(!event.detail.successful) {
+                      const errorDiv = document.getElementById('registration-error');
+                      errorDiv.classList.remove('hidden');
+                      errorDiv.querySelector('span').textContent = JSON.parse(event.detail.xhr.response).error;
+                  }
+              ">
+              <div id="request-debug" class="text-sm text-gray-600 mb-4"></div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                    Username
+                </label>
+                <input
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="username"
+                    type="text"
+                    name="username"
+                    required
+                    minlength="3"
+                    pattern="[a-zA-Z0-9_]+"
+                    title="Username must be at least 3 characters and can only contain letters, numbers, and underscores">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                    Email
+                </label>
+                <input
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="email"
+                    type="email"
+                    name="email"
+                    required>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                    Password
+                </label>
+                <input
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="password"
+                    type="password"
+                    name="password"
+                    required
+                    minlength="8"
+                    pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}[\]\\|;:',.<>/?~`-]{8,}$"
+                    title="Password must be at least 8 characters and contain at least one letter and one number">
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="confirm-password">
+                    Confirm Password
+                </label>
+                <input
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="confirm-password"
+                    type="password"
+                    required>
+            </div>
+
+            <div class="flex items-center justify-between mb-6">
+                <button
+                    class="bg-accent hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transition"
+                    type="submit">
+                    Create Account
+                </button>
+            </div>
+
+            <div class="text-center">
+                <a href="/" class="text-accent hover:text-blue-700 text-sm font-bold">
+                    Already have an account? Sign in
+                </a>
+            </div>
+        </form>
+
+        <div id="registration-error" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
+            <span class="block sm:inline"></span>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirm-password');
+            const errorDiv = document.getElementById('registration-error');
+            const errorSpan = errorDiv.querySelector('span');
+
+            if (password.value !== confirmPassword.value) {
+                e.preventDefault();
+                errorDiv.classList.remove('hidden');
+                errorSpan.textContent = 'Passwords do not match';
+                return false;
+            }
+
+            errorDiv.classList.add('hidden');
+            errorSpan.textContent = '';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Cryptic</title>
+    <script src="/static/htmx.min.js"></script>
+    <script src="/static/hyperscript.min.js"></script>
+    <script src="/static/tailwind.min.js"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Message List -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h3 class="text-xl font-bold text-primary mb-4">Encrypted Messages</h3>
+            <div id="messages-list"
+                 hx-get="/api/messages"
+                 hx-trigger="load once, messageUpdate from:body"
+                 class="space-y-4">
+                <div class="animate-pulse">
+                    <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div class="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                    <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Message Form -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-xl font-bold text-primary mb-4">Send Encrypted Message</h3>
+            <form hx-post="/api/messages"
+                  hx-swap="outerHTML"
+                  hx-trigger="submit"
+                  class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="recipient">
+                        Recipient Username
+                    </label>
+                    <input
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="recipient"
+                        type="text"
+                        name="recipient"
+                        required
+                        pattern="[a-zA-Z0-9_]+"
+                        title="Enter a valid username">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="subject">
+                        Subject
+                    </label>
+                    <input
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="subject"
+                        type="text"
+                        name="subject"
+                        required
+                        maxlength="100">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="message">
+                        Message Content
+                    </label>
+                    <textarea
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="message"
+                        name="message"
+                        rows="6"
+                        required
+                        placeholder="Your message will be encrypted end-to-end"></textarea>
+                </div>
+
+                <div class="flex justify-end">
+                    <button
+                        type="submit"
+                        class="bg-accent hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition">
+                        Send Encrypted Message
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.body.addEventListener('htmx:afterRequest', function(evt) {
+            if (evt.detail.successful && evt.detail.path === '/api/messages') {
+                document.body.dispatchEvent(new Event('messageUpdate'));
+                // Clear form after successful send
+                evt.detail.target.reset();
+            }
+        });
+    </script>
+</body>
+</html>
