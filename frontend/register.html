@@ -18,15 +18,15 @@
 
         <form hx-post="/api/register" hx-swap="outerHTML"
               hx-headers='{"Content-Type": "application/json"}'
-              hx-on::before-request="
-                  const formData = {
-                      username: document.getElementById('username').value,
-                      email: document.getElementById('email').value,
-                      password: document.getElementById('password').value
-                  };
-                  console.log('Sending registration data:', formData);
-                  event.detail.requestConfig.body = JSON.stringify(formData);
-              "
+            hx-on::before-request="
+                const formData = {
+                    username: document.getElementById('username').value,
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value
+                };
+                event.detail.requestConfig.body = formData; // Remove JSON.stringify()
+                console.log('Sending registration data:', formData);
+            "
               hx-on::after-request="
                   console.log('Registration response:', event.detail.xhr.response);
                   if(!event.detail.successful) {

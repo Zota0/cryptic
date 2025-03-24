@@ -36,6 +36,7 @@ func main() {
 	// Initialize database
 	database.InitDB(db)
 
+	gin.SetMode(gin.DebugMode)
 	// Set up Gin router
 	r := gin.Default()
 

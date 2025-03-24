@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"x/cryptic/models"
 	"x/cryptic/utils"
@@ -22,6 +23,7 @@ func NewAuthController(db *gorm.DB) *AuthController {
 
 type RegisterRequest struct {
 	Username string `json:"username" binding:"required,alphanum,min=3,max=30"`
+	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=8,max=72"`
 }
 
@@ -63,7 +65,26 @@ func (ac *AuthController) Status(c *gin.Context) {
 func (ac *AuthController) Register(c *gin.Context) {
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Please ensure all fields are filled correctly. Username must be 3-30 characters long and contain only letters and numbers. Password must be at least 8 characters long."})
+		validationErrors := map[string]string{}
+		if err.Error() == "EOF" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Request body is empty"})
+			return
+		}
+		if strings.Contains(err.Error(), "username") {
+			validationErrors["username"] = "Username must be 3-30 characters long and contain only letters and numbers"
+		}
+		if strings.Contains(err.Error(), "email") {
+			validationErrors["email"] = "Please provide a valid email address"
+		}
+		if strings.Contains(err.Error(), "password") {
+			validationErrors["password"] = "Password must be at least 8 characters long"
+		}
+		if len(validationErrors) == 0 {
+			validationErrors["error"] = "Invalid request format"
+		}
+
+		validationErrors["error"] = err.Error()
+		c.JSON(http.StatusBadRequest, validationErrors)
 		return
 	}
 
