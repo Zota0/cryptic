@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cryptic - Secure Messaging & Transactions</title>
     <script src="/static/htmx.min.js"></script>
-    <script src="/static/hyperscript.min.js"></script>
     <script src="/static/tailwind.min.js"></script>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
@@ -37,18 +36,8 @@
         <!-- Login Form -->
         <div id="login-form" class="max-w-md mx-auto bg-white rounded-lg shadow-md p-8">
             <h2 class="text-2xl font-bold mb-6 text-primary">Login</h2>
-            <form hx-post="/api/login" 
-                  hx-target="#auth-section"
-                  hx-swap="outerHTML"
-                  hx-headers='{"Content-Type": "application/json"}'
-                  hx-on::before-request="event.detail.requestConfig.body = JSON.stringify({
-                      username: document.getElementById('username').value,
-                      password: document.getElementById('password').value
-                  });"
-                  hx-on::after-request="if(event.detail.successful) {
-                      htmx.trigger('#auth-section', 'auth-changed');
-                  }">
-                  <div id="request-debug" class="text-sm text-gray-600 mb-4"></div>
+            <form id="loginForm">
+                <div id="request-debug" class="text-sm text-gray-600 mb-4"></div>
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
                         Username
@@ -92,23 +81,81 @@
         </div>
     </main>
 
-    <script type="text/hyperscript">
-        on htmx:afterSettle(target) from body
-            if target.id == "auth-section" then
-                if target.innerHTML contains "Logout" then
-                    remove .hidden from #content
-                    add .hidden to #login-form
-                else
-                    add .hidden to #content
-                    remove .hidden from #login-form
-                end
-            end
-        end
+    <script>
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const errorDiv = document.getElementById('login-error');
+            errorDiv.classList.add('hidden');
 
-        def authChanged
-            remove .hidden from #content
-            add .hidden to #login-form
-        end
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('token', data.token);
+                    
+                    // Update auth section
+                    const authSection = document.getElementById('auth-section');
+                    authSection.innerHTML = `
+                        <button class="bg-accent hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
+                                onclick="logout()">
+                            Logout
+                        </button>
+                    `;
+                    
+                    // Toggle visibility
+                    document.getElementById('content').classList.remove('hidden');
+                    document.getElementById('login-form').classList.add('hidden');
+                } else {
+                    const errorData = await response.json();
+                    errorDiv.textContent = errorData.error || 'Login failed. Please try again.';
+                    errorDiv.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorDiv.textContent = 'Network error. Please check your connection.';
+                errorDiv.classList.remove('hidden');
+            }
+        });
+
+        // Logout handler
+        window.logout = () => {
+            localStorage.removeItem('token');
+            window.location.reload();
+        }
+
+        // HTMX event handling
+        document.body.addEventListener('htmx:afterSettle', (event) => {
+            if (event.target.id === 'auth-section') {
+                const content = document.getElementById('content');
+                const loginForm = document.getElementById('login-form');
+                
+                if (event.target.innerHTML.includes('Logout')) {
+                    content.classList.remove('hidden');
+                    loginForm.classList.add('hidden');
+                } else {
+                    content.classList.add('hidden');
+                    loginForm.classList.remove('hidden');
+                }
+            }
+        });
+
+        // Initial state setup
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('token')) {
+                document.getElementById('content').classList.remove('hidden');
+                document.getElementById('login-form').classList.add('hidden');
+            }
+        });
     </script>
 </body>
 </html>

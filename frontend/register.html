@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Cryptic</title>
-    <script src="/static/htmx.min.js"></script>
-    <script src="/static/hyperscript.min.js"></script>
     <script src="/static/tailwind.min.js"></script>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
@@ -16,26 +14,7 @@
             <p class="text-gray-600 mt-2">Join Cryptic for secure messaging and transactions</p>
         </div>
 
-        <form hx-post="/api/register" hx-swap="outerHTML"
-              hx-headers='{"Content-Type": "application/json"}'
-            hx-on::before-request="
-                const formData = {
-                    username: document.getElementById('username').value,
-                    email: document.getElementById('email').value,
-                    password: document.getElementById('password').value
-                };
-                event.detail.requestConfig.body = formData; // Remove JSON.stringify()
-                console.log('Sending registration data:', formData);
-            "
-              hx-on::after-request="
-                  console.log('Registration response:', event.detail.xhr.response);
-                  if(!event.detail.successful) {
-                      const errorDiv = document.getElementById('registration-error');
-                      errorDiv.classList.remove('hidden');
-                      errorDiv.querySelector('span').textContent = JSON.parse(event.detail.xhr.response).error;
-                  }
-              ">
-              <div id="request-debug" class="text-sm text-gray-600 mb-4"></div>
+        <form id="registrationForm">
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
                     Username
@@ -74,19 +53,21 @@
                     name="password"
                     required
                     minlength="8"
-                    pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}[\]\\|;:',.<>/?~`-]{8,}$"
-                    title="Password must be at least 8 characters and contain at least one letter and one number">
+                    pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}[\]\\|;:',.<>/?~\\-]{8,}$"
+                    title="Password must be at least 8 characters and contain at least one letter and one number"
+                    autocomplete="new-password">
             </div>
 
             <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="confirm-password">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="confirmPassword">
                     Confirm Password
                 </label>
                 <input
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="confirm-password"
+                    id="confirmPassword"
                     type="password"
-                    required>
+                    required
+                    autocomplete="new-password">
             </div>
 
             <div class="flex items-center justify-between mb-6">
@@ -110,21 +91,51 @@
     </div>
 
     <script>
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const password = document.getElementById('password');
-            const confirmPassword = document.getElementById('confirm-password');
+        document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
             const errorDiv = document.getElementById('registration-error');
             const errorSpan = errorDiv.querySelector('span');
+            errorDiv.classList.add('hidden');
 
-            if (password.value !== confirmPassword.value) {
-                e.preventDefault();
+            // Get form values
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validate passwords match
+            if (password !== confirmPassword) {
                 errorDiv.classList.remove('hidden');
                 errorSpan.textContent = 'Passwords do not match';
-                return false;
+                return;
             }
 
-            errorDiv.classList.add('hidden');
-            errorSpan.textContent = '';
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username,
+                        email,
+                        password
+                    })
+                });
+
+                if (response.ok) {
+                    window.location.href = '/';
+                } else {
+                    const errorData = await response.json();
+                    errorDiv.classList.remove('hidden');
+                    errorSpan.textContent = errorData.error || 'Registration failed. Please try again.';
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                errorDiv.classList.remove('hidden');
+                errorSpan.textContent = 'Network error. Please check your connection.';
+            }
         });
     </script>
 </body>
