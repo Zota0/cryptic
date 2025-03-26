@@ -97,14 +97,12 @@
             const errorDiv = document.getElementById('registration-error');
             const errorSpan = errorDiv.querySelector('span');
             errorDiv.classList.add('hidden');
-
-            // Get form values
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
-            // Validate passwords match
+            // Validate
             if (password !== confirmPassword) {
                 errorDiv.classList.remove('hidden');
                 errorSpan.textContent = 'Passwords do not match';
