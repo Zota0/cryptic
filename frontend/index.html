@@ -65,10 +65,10 @@
                     <button
                         class="bg-accent hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition"
                         type="submit">
-                        Zarejestruj się
+                        Zaloguj się
                     </button>
                     <a class="inline-block align-baseline font-bold text-sm text-accent hover:text-blue-700" href="/register">
-                        tutaj
+                        Zarejestruj się
                     </a>
                 </div>
             </form>
@@ -113,12 +113,12 @@
                     document.getElementById('login-form').classList.add('hidden');
                 } else {
                     const errorData = await response.json();
-                    errorDiv.textContent = errorData.error || 'Login failed. Please try again.';
+                    errorDiv.textContent = errorData.error || 'Logowanie nieudane. Spróbuj ponownie.';
                     errorDiv.classList.remove('hidden');
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                errorDiv.textContent = 'Network error. Please check your connection.';
+                errorDiv.textContent = 'Bład połączenia.';
                 errorDiv.classList.remove('hidden');
             }
         });
