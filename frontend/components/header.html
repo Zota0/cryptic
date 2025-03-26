@@ -1,0 +1,15 @@
+<nav class="bg-primary text-white shadow-lg" id="main-header">
+    <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+            <div class="text-xl font-bold">Cryptic</div>
+            <div class="hidden md:flex space-x-8">
+                <a hx-get="/dashboard" hx-target="#content">Panel</a>
+                <a hx-get="/messages" hx-target="#content">Wiadomości</a>
+                <a hx-get="/transactions" hx-target="#content">Przelewy</a>
+            </div>
+            <div id="auth-buttons">
+                <!-- Przyciski aktualizowane przez JS -->
+            </div>
+        </div>
+    </div>
+</nav>

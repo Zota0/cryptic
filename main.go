@@ -59,6 +59,9 @@ func main() {
 	r.GET("/register", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "register.html", nil)
 	})
+	r.GET("/login", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "login.html", nil)
+	})
 	r.GET("/messages", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "messages.html", nil)
 	})

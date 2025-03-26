@@ -3,154 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cryptic - Bezpieczna strona</title>
+    <title>Cryptic</title>
     <script src="/static/htmx.min.js"></script>
     <script src="/static/tailwind.min.js"></script>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <nav class="bg-primary text-white shadow-lg">
+<body class="bg-gray-100 min-h-screen"
+      hx-history="true"
+      hx-boost="true">
+    
+    <!-- Dynamiczny Header -->
+    <nav class="bg-primary text-white shadow-lg" id="main-header">
         <div class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <div class="text-xl font-bold">Cryptic</div>
                 <div class="hidden md:flex space-x-8">
-                    <a href="/dashboard" hx-get="/dashboard" hx-target="#content" class="hover:text-accent transition">Panel</a>
-                    <a href="/messages" hx-get="/messages" hx-target="#content" class="hover:text-accent transition">Wiadomości</a>
-                    <a href="/transactions" hx-get="/transactions" hx-target="#content" class="hover:text-accent transition">Przelewy</a>
+                    <a hx-get="/dashboard" hx-target="#content">Panel</a>
+                    <a hx-get="/messages" hx-target="#content">Wiadomości</a>
+                    <a hx-get="/transactions" hx-target="#content">Przelewy</a>
                 </div>
-                <div id="auth-section">
-                    <button
-                        hx-get="/api/auth/status"
-                        hx-trigger="load once"
-                        hx-swap="outerHTML"
-                        hx-target="this"
-                        class="bg-accent hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition">
-                        Loguj
-                    </button>
+                <div id="auth-buttons">
+                    <!-- Przyciski aktualizowane przez JS -->
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="container mx-auto px-6 py-8">
-        <div id="login-form" class="max-w-md mx-auto bg-white rounded-lg shadow-md p-8">
-            <h2 class="text-2xl font-bold mb-6 text-primary">Login</h2>
-            <form id="loginForm">
-                <div id="request-debug" class="text-sm text-gray-600 mb-4"></div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                        Nazwa użytkownika
-                    </label>
-                    <input
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="username"
-                        type="text"
-                        name="username"
-                        required>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                        Hasło
-                    </label>
-                    <input
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                        id="password"
-                        type="password"
-                        name="password"
-                        autocomplete="current-password"
-                        required>
-                </div>
-                <div id="login-error" class="hidden text-red-500 text-sm mb-4"></div>
-                <div class="flex items-center justify-between">
-                    <button
-                        class="bg-accent hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition"
-                        type="submit">
-                        Zaloguj się
-                    </button>
-                    <a class="inline-block align-baseline font-bold text-sm text-accent hover:text-blue-700" href="/register">
-                        Zarejestruj się
-                    </a>
-                </div>
-            </form>
-        </div>
-      
-        <div id="content" class="hidden"></div>
+    <!-- Główna zawartość -->
+    <main id="content" class="container mx-auto px-6 py-8">
+        <!-- Zawartość będzie ładowana dynamicznie -->
     </main>
 
     <script>
-     
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const errorDiv = document.getElementById('login-error');
-            errorDiv.classList.add('hidden');
-
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    localStorage.setItem('token', data.token);
-                    
-                    
-                    const authSection = document.getElementById('auth-section');
-                    authSection.innerHTML = `
-                        <button class="bg-accent hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
-                                onclick="logout()">
-                            Wyloguj się
-                        </button>
-                    `;
-                    
-                    
-                   document.getElementById('content').classList.remove('hidden');
-                    document.getElementById('login-form').classList.add('hidden');
-                } else {
-                    const errorData = await response.json();
-                    errorDiv.textContent = errorData.error || 'Logowanie nieudane. Spróbuj ponownie.';
-                    errorDiv.classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                errorDiv.textContent = 'Bład połączenia.';
-                errorDiv.classList.remove('hidden');
+        // Inicjalizacja
+        document.addEventListener('DOMContentLoaded', () => {
+            updateAuthState();
+            if (!localStorage.getItem('token')) {
+                htmx.ajax('GET', '/login', '#content');
+            } else {
+                htmx.ajax('GET', '/dashboard', '#content');
             }
         });
 
-        window.logout = () => {
-            localStorage.removeItem('token');
-            window.location.reload();
+        // Aktualizacja przycisków autentykacji
+        function updateAuthState() {
+            const authButtons = document.getElementById('auth-buttons');
+            if (localStorage.getItem('token')) {
+                authButtons.innerHTML = `
+                    <button onclick="logout()" class="bg-accent text-white py-2 px-4 rounded">
+                        Wyloguj
+                    </button>
+                `;
+            } else {
+                authButtons.innerHTML = `
+                    <button hx-get="/login" hx-target="#content" class="bg-accent text-white py-2 px-4 rounded">
+                        Logowanie
+                    </button>
+                `;
+            }
         }
 
-        // HTMX
-        document.body.addEventListener('htmx:afterSettle', (event) => {
-            if (event.target.id === 'auth-section') {
-                const content = document.getElementById('content');
-                const loginForm = document.getElementById('login-form');
-                
-                if (event.target.innerHTML.includes('Logout')) {
-                    content.classList.remove('hidden');
-                    loginForm.classList.add('hidden');
-                } else {
-                    content.classList.add('hidden');
-                    loginForm.classList.remove('hidden');
-                }
+        // Obsługa logowania
+        document.body.addEventListener('htmx:afterRequest', (e) => {
+            if (e.detail.requestConfig.path === '/api/login' && e.detail.success) {
+                localStorage.setItem('token', e.detail.xhr.response.token);
+                updateAuthState();
+                htmx.ajax('GET', '/dashboard', '#content');
             }
         });
 
-        // Init
-        document.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('token')) {
-                document.getElementById('content').classList.remove('hidden');
-                document.getElementById('login-form').classList.add('hidden');
-            }
-        });
+        // Logout
+        window.logout = () => {
+            localStorage.removeItem('token');
+            updateAuthState();
+            htmx.ajax('GET', '/login', '#content');
+        }
     </script>
 </body>
 </html>
