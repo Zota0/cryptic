@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Cryptic</title>
+    <title>Rejestracja - Cryptic</title>
     <script src="/static/tailwind.min.js"></script>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
     <div class="max-w-md w-full bg-white rounded-lg shadow-md p-8 m-4">
         <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-primary">Create Account</h2>
-            <p class="text-gray-600 mt-2">Join Cryptic for secure messaging and transactions</p>
+            <h2 class="text-3xl font-bold text-primary">Utwórz konto</h2>
+            <p class="text-gray-600 mt-2">Dołącz do nas!</p>
         </div>
 
         <form id="registrationForm">
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                    Username
+                    Nazwa Użytkownika
                 </label>
                 <input
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -27,7 +27,7 @@
                     required
                     minlength="3"
                     pattern="[a-zA-Z0-9_]+"
-                    title="Username must be at least 3 characters and can only contain letters, numbers, and underscores">
+                    >
             </div>
 
             <div class="mb-4">
@@ -44,7 +44,7 @@
 
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                    Password
+                    Hasło
                 </label>
                 <input
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -54,13 +54,12 @@
                     required
                     minlength="8"
                     pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+={}[\]\\|;:',.<>/?~\\-]{8,}$"
-                    title="Password must be at least 8 characters and contain at least one letter and one number"
                     autocomplete="new-password">
             </div>
 
             <div class="mb-6">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="confirmPassword">
-                    Confirm Password
+                    Potwierdź hasło
                 </label>
                 <input
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -74,13 +73,13 @@
                 <button
                     class="bg-accent hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transition"
                     type="submit">
-                    Create Account
+                    Utwórz konto
                 </button>
             </div>
 
             <div class="text-center">
                 <a href="/" class="text-accent hover:text-blue-700 text-sm font-bold">
-                    Already have an account? Sign in
+                    Posiadasz już? Zaloguj się
                 </a>
             </div>
         </form>
@@ -105,7 +104,7 @@
             // Validate
             if (password !== confirmPassword) {
                 errorDiv.classList.remove('hidden');
-                errorSpan.textContent = 'Passwords do not match';
+                errorSpan.textContent = 'Hasła się nie zgadzają';
                 return;
             }
 
@@ -127,12 +126,12 @@
                 } else {
                     const errorData = await response.json();
                     errorDiv.classList.remove('hidden');
-                    errorSpan.textContent = errorData.error || 'Registration failed. Please try again.';
+                    errorSpan.textContent = errorData.error || 'Rejestracja nieudana. Spróbuj ponownie.';
                 }
             } catch (error) {
                 console.error('Registration error:', error);
                 errorDiv.classList.remove('hidden');
-                errorSpan.textContent = 'Network error. Please check your connection.';
+                errorSpan.textContent = 'Problem z połączeniem.';
             }
         });
     </script>
