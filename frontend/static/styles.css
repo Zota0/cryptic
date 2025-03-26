@@ -1,4 +1,4 @@
-/* Base styles */
+/* Base */
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
@@ -16,7 +16,7 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Form styles */
+/* Form */
 form {
     max-width: 400px;
     margin: 20px auto;
@@ -52,7 +52,7 @@ button:hover {
     background-color: #0056b3;
 }
 
-/* Message styles */
+/* Message */
 .message {
     padding: 15px;
     margin-bottom: 10px;
@@ -61,7 +61,7 @@ button:hover {
     border: 1px solid #ddd;
 }
 
-/* Transaction styles */
+/* Transaction */
 .transaction {
     padding: 15px;
     margin-bottom: 10px;
@@ -85,7 +85,7 @@ nav a:hover {
     text-decoration: underline;
 }
 
-/* Error message */
+/* Error */
 .error {
     color: #dc3545;
     margin-top: 5px;
