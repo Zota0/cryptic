@@ -12,7 +12,7 @@
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h3 class="text-xl font-bold text-primary mb-4">Encrypted Messages</h3>
+            <h3 class="text-xl font-bold text-primary mb-4">Zaszyfrowane wiadomości</h3>
             <div id="messages-list"
                  hx-get="/api/messages"
                  hx-trigger="load once, messageUpdate from:body"
@@ -26,14 +26,14 @@
         </div>
 
         <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-xl font-bold text-primary mb-4">Send Encrypted Message</h3>
+            <h3 class="text-xl font-bold text-primary mb-4">Wyślij wiadomość</h3>
             <form hx-post="/api/messages"
                   hx-swap="outerHTML"
                   hx-trigger="submit"
                   class="space-y-4">
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="recipient">
-                        Recipient Username
+                        Odbiorca
                     </label>
                     <input
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -47,7 +47,7 @@
 
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="subject">
-                        Subject
+                       Tytuł
                     </label>
                     <input
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -60,7 +60,7 @@
 
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="message">
-                        Message Content
+                        Treść
                     </label>
                     <textarea
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -68,14 +68,14 @@
                         name="message"
                         rows="6"
                         required
-                        placeholder="Your message will be encrypted end-to-end"></textarea>
+                        placeholder="Twoja End-To-End zakodowana wiadomość"></textarea>
                 </div>
 
                 <div class="flex justify-end">
                     <button
                         type="submit"
                         class="bg-accent hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition">
-                        Send Encrypted Message
+                        Wyślij
                     </button>
                 </div>
             </form>
