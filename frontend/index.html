@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cryptic - Secure Messaging & Transactions</title>
+    <title>Cryptic - Bezpieczna strona</title>
     <script src="/static/htmx.min.js"></script>
     <script src="/static/tailwind.min.js"></script>
     <link rel="stylesheet" href="/static/styles.css">
@@ -14,9 +14,9 @@
             <div class="flex items-center justify-between">
                 <div class="text-xl font-bold">Cryptic</div>
                 <div class="hidden md:flex space-x-8">
-                    <a href="/dashboard" hx-get="/dashboard" hx-target="#content" class="hover:text-accent transition">Dashboard</a>
-                    <a href="/messages" hx-get="/messages" hx-target="#content" class="hover:text-accent transition">Messages</a>
-                    <a href="/transactions" hx-get="/transactions" hx-target="#content" class="hover:text-accent transition">Transactions</a>
+                    <a href="/dashboard" hx-get="/dashboard" hx-target="#content" class="hover:text-accent transition">Panel</a>
+                    <a href="/messages" hx-get="/messages" hx-target="#content" class="hover:text-accent transition">Wiadomości</a>
+                    <a href="/transactions" hx-get="/transactions" hx-target="#content" class="hover:text-accent transition">Przelewy</a>
                 </div>
                 <div id="auth-section">
                     <button
@@ -25,7 +25,7 @@
                         hx-swap="outerHTML"
                         hx-target="this"
                         class="bg-accent hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition">
-                        Login
+                        Loguj
                     </button>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                 <div id="request-debug" class="text-sm text-gray-600 mb-4"></div>
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                        Username
+                        Nazwa użytkownika
                     </label>
                     <input
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -50,7 +50,7 @@
                 </div>
                 <div class="mb-6">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                        Password
+                        Hasło
                     </label>
                     <input
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
@@ -65,10 +65,10 @@
                     <button
                         class="bg-accent hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition"
                         type="submit">
-                        Sign In
+                        Zarejestruj się
                     </button>
                     <a class="inline-block align-baseline font-bold text-sm text-accent hover:text-blue-700" href="/register">
-                        Register
+                        tutaj
                     </a>
                 </div>
             </form>
@@ -104,7 +104,7 @@
                     authSection.innerHTML = `
                         <button class="bg-accent hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
                                 onclick="logout()">
-                            Logout
+                            Wyloguj się
                         </button>
                     `;
                     
