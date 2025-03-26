@@ -65,10 +65,17 @@
 
         // Obsługa logowania
         document.body.addEventListener('htmx:afterRequest', (e) => {
-            if (e.detail.requestConfig.path === '/api/login' && e.detail.success) {
-                localStorage.setItem('token', e.detail.xhr.response.token);
-                updateAuthState();
-                htmx.ajax('GET', '/dashboard', '#content');
+            if (e.detail.requestConfig.path === '/api/login' && e.detail.successful) {
+                try {
+                    const response = JSON.parse(e.detail.xhr.response);
+                    if (response.token) {
+                        localStorage.setItem('token', response.token);
+                        updateAuthState();
+                        htmx.ajax('GET', '/dashboard', '#content');
+                    }
+                } catch (error) {
+                    console.error('Error parsing login response:', error);
+                }
             }
         });
 
