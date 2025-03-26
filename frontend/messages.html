@@ -11,7 +11,6 @@
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
-        <!-- Message List -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-8">
             <h3 class="text-xl font-bold text-primary mb-4">Encrypted Messages</h3>
             <div id="messages-list"
@@ -26,7 +25,6 @@
             </div>
         </div>
 
-        <!-- New Message Form -->
         <div class="bg-white rounded-lg shadow-md p-6">
             <h3 class="text-xl font-bold text-primary mb-4">Send Encrypted Message</h3>
             <form hx-post="/api/messages"
@@ -88,7 +86,7 @@
         document.body.addEventListener('htmx:afterRequest', function(evt) {
             if (evt.detail.successful && evt.detail.path === '/api/messages') {
                 document.body.dispatchEvent(new Event('messageUpdate'));
-                // Clear form after successful send
+                // Clear
                 evt.detail.target.reset();
             }
         });
