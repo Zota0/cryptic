@@ -17,7 +17,7 @@
                 <div class="text-3xl font-bold text-accent" id="balance"
                     hx-get="/api/balance"
                     hx-trigger="load once, balanceUpdate from:body">
-                    Loading...
+                    Ładowanie...
                 </div>
             </div>
 
@@ -29,7 +29,7 @@
                       class="space-y-4">
                     <div>
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="recipient">
-                            Recipient Username
+                            Nazwa odbiorcy
                         </label>
                         <input
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -38,15 +38,14 @@
                             name="recipient"
                             required
                             pattern="[a-zA-Z0-9_]+"
-                            title="Enter a valid username">
+                            title="Wpisz prawidłową nazwę użytkownika.">
                     </div>
 
                     <div>
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="amount">
-                            Amount
+                            Kwota
                         </label>
                         <div class="relative">
-                            <span class="absolute left-3 top-2 text-gray-600">$</span>
                             <input
                                 class="shadow appearance-none border rounded w-full py-2 pl-8 pr-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 id="amount"
@@ -60,7 +59,7 @@
 
                     <div>
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="note">
-                            Note (Optional)
+                            Notatka (Opcjonalne)
                         </label>
                         <textarea
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -75,7 +74,7 @@
                         <button
                             type="submit"
                             class="bg-accent hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition">
-                            Send Money
+                            Wyślij
                         </button>
                     </div>
                 </form>
@@ -83,7 +82,7 @@
         </div>
 
         <div class="mt-8 bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-xl font-bold text-primary mb-4">Transaction History</h3>
+            <h3 class="text-xl font-bold text-primary mb-4">Historia</h3>
             <div id="transaction-list"
                  hx-get="/api/transactions"
                  hx-trigger="load once, transactionComplete from:body"
